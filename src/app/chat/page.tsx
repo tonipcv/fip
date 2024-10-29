@@ -129,84 +129,106 @@ export default function Chat() {
     </div>
   );
 
+  const solicitarPermissao = async () => {
+    try {
+      console.log('Solicitando permissão...');
+      window.OneSignal.showSlidedownPrompt();
+    } catch (error) {
+      console.error('Erro ao solicitar permissão:', error);
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 p-20 mb-4">
-      <SubscriptionStatus />
-      <div className="flex justify-center mb-8">
-        <Image
-          src="/ft-icone.png"
-          alt="Logo da Empresa"
-          width={100}
-          height={50}
-        />
-      </div>
-
-      {/* Div com o texto "Entradas" com fonte maior */}
-      <div className="text-center font-helvetica mb-10 mt-30 text-2xl">
-        Sinais de Entradas:
-      </div>
-      
-      <div className="h-full max-w-md mx-auto bg-black rounded-lg shadow-md p-4 overflow-y-auto" style={{ maxHeight: '500px' }}>
-        <div className="mb-4">
-          <div className="bg-black p-3 rounded-lg border-2 border-gray-100">
-            <p className="text-green-500">#CRV / USDT 🟢 COMPRA</p>
-            <p>✅ ENTRADA NA ZONA: 0.250</p>
-            <p>⚡️ ALAVANCAGEM ISOLADA: Máx. 20x</p>
-            <p>Alvos: 4% - 20% - 40% - 60% - 80% - 100% - 120% - 140% - 160% - 180% - 200% -</p>
-            <p className="text-orange-300">STOOPLOSS: 90%</p>
-            <p className="text-xs text-gray-100 mt-2">24/10/2024 10:00</p>
-          </div>
-          <div className="bg-black p-3 rounded-lg mt-3 border-2 border-gray-100">
-            <p className="text-green-500">#CRV / USDT 🟢 COMPRA</p>
-            <p>✅ ENTRADA NA ZONA: 0.250</p>
-            <p>⚡️ ALAVANCAGEM ISOLADA: Máx. 20x</p>
-            <p>Alvos: 4% - 20% - 40% - 60% - 80% - 100% - 120% - 140% - 160% - 180% - 200% -</p>
-            <p className="text-orange-300">STOOPLOSS: 90%</p>
-            <p className="text-xs text-gray-100 mt-2">24/10/2024 10:00</p>
-          </div>
-          <div className="bg-black p-3 rounded-lg mt-3 border-2 border-gray-100">
-            <p className="text-green-500">#CRV / USDT 🟢 COMPRA</p>
-            <p>✅ ENTRADA NA ZONA: 0.250</p>
-            <p>⚡️ ALAVANCAGEM ISOLADA: Máx. 20x</p>
-            <p>Alvos: 4% - 20% - 40% - 60% - 80% - 100% - 120% - 140% - 160% - 180% - 200% -</p>
-            <p className="text-orange-300">STOOPLOSS: 90%</p>
-            <p className="text-xs text-gray-100 mt-2">24/10/2024 10:00</p>
-          </div>
-          <div className="bg-black p-3 rounded-lg mt-3 border-2 border-gray-100">
-            <p className="text-green-500">#CRV / USDT 🟢 COMPRA</p>
-            <p>✅ ENTRADA NA ZONA: 0.250</p>
-            <p>⚡️ ALAVANCAGEM ISOLADA: Máx. 20x</p>
-            <p>Alvos: 4% - 20% - 40% - 60% - 80% - 100% - 120% - 140% - 160% - 180% - 200% -</p>
-            <p className="text-orange-300">STOOPLOSS: 90%</p>
-            <p className="text-xs text-gray-100 mt-2">24/10/2024 10:00</p>
-          </div>
+    <div className="min-h-screen bg-black">
+      <div className="container mx-auto px-4 p-20 mb-4">
+        <SubscriptionStatus />
+        <div className="flex justify-center mb-8">
+          <Image
+            src="/ft-icone.png"
+            alt="Logo da Empresa"
+            width={100}
+            height={50}
+          />
         </div>
-      </div>
 
-      <div className="text-center mt-7">
-        {!isIOS && (
-          <>
+        {!subscriptionStatus.isSubscribed && (
+          <div className="text-center mb-6">
             <button
-              className="w-full md:w-1/2 lg:w-1/3 px-4 py-2 font-bold text-black bg-gray-200 rounded-full hover:bg-gray-400 focus:outline-none focus:shadow-outline mt-4"
-              onClick={enviarNotificacao}
+              onClick={solicitarPermissao}
+              className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
             >
-              Enviar Ordem
+              🔔 Ativar Notificações
             </button>
-
-            <button
-              className="w-full md:w-1/2 lg:w-1/3 px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-600 focus:outline-none focus:shadow-outline mt-4"
-              onClick={testarIntegracao}
-            >
-              Testar Integração
-            </button>
-          </>
+          </div>
         )}
 
-        {renderIOSOptions()}
-      </div>
+        <div className="text-center font-helvetica mb-10 mt-30 text-2xl text-white">
+          Sinais de Entradas:
+        </div>
+        
+        <div className="h-full max-w-md mx-auto bg-black rounded-lg shadow-md p-4 overflow-y-auto" 
+             style={{ maxHeight: '500px', backgroundColor: '#000000' }}>
+          <div className="mb-4">
+            <div className="bg-black p-3 rounded-lg border-2 border-gray-100">
+              <p className="text-green-500">#CRV / USDT 🟢 COMPRA</p>
+              <p>✅ ENTRADA NA ZONA: 0.250</p>
+              <p>⚡️ ALAVANCAGEM ISOLADA: Máx. 20x</p>
+              <p>Alvos: 4% - 20% - 40% - 60% - 80% - 100% - 120% - 140% - 160% - 180% - 200% -</p>
+              <p className="text-orange-300">STOOPLOSS: 90%</p>
+              <p className="text-xs text-gray-100 mt-2">24/10/2024 10:00</p>
+            </div>
+            <div className="bg-black p-3 rounded-lg mt-3 border-2 border-gray-100">
+              <p className="text-green-500">#CRV / USDT 🟢 COMPRA</p>
+              <p>✅ ENTRADA NA ZONA: 0.250</p>
+              <p>⚡️ ALAVANCAGEM ISOLADA: Máx. 20x</p>
+              <p>Alvos: 4% - 20% - 40% - 60% - 80% - 100% - 120% - 140% - 160% - 180% - 200% -</p>
+              <p className="text-orange-300">STOOPLOSS: 90%</p>
+              <p className="text-xs text-gray-100 mt-2">24/10/2024 10:00</p>
+            </div>
+            <div className="bg-black p-3 rounded-lg mt-3 border-2 border-gray-100">
+              <p className="text-green-500">#CRV / USDT 🟢 COMPRA</p>
+              <p>✅ ENTRADA NA ZONA: 0.250</p>
+              <p>⚡️ ALAVANCAGEM ISOLADA: Máx. 20x</p>
+              <p>Alvos: 4% - 20% - 40% - 60% - 80% - 100% - 120% - 140% - 160% - 180% - 200% -</p>
+              <p className="text-orange-300">STOOPLOSS: 90%</p>
+              <p className="text-xs text-gray-100 mt-2">24/10/2024 10:00</p>
+            </div>
+            <div className="bg-black p-3 rounded-lg mt-3 border-2 border-gray-100">
+              <p className="text-green-500">#CRV / USDT 🟢 COMPRA</p>
+              <p>✅ ENTRADA NA ZONA: 0.250</p>
+              <p>⚡️ ALAVANCAGEM ISOLADA: Máx. 20x</p>
+              <p>Alvos: 4% - 20% - 40% - 60% - 80% - 100% - 120% - 140% - 160% - 180% - 200% -</p>
+              <p className="text-orange-300">STOOPLOSS: 90%</p>
+              <p className="text-xs text-gray-100 mt-2">24/10/2024 10:00</p>
+            </div>
+          </div>
+        </div>
 
-      <PWAInstallPrompt />
-      <BottomNavigation />
+        <div className="text-center mt-7">
+          {!isIOS && (
+            <>
+              <button
+                className="w-full md:w-1/2 lg:w-1/3 px-4 py-2 font-bold text-black bg-gray-200 rounded-full hover:bg-gray-400 focus:outline-none focus:shadow-outline mt-4"
+                onClick={enviarNotificacao}
+              >
+                Enviar Ordem
+              </button>
+
+              <button
+                className="w-full md:w-1/2 lg:w-1/3 px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-600 focus:outline-none focus:shadow-outline mt-4"
+                onClick={testarIntegracao}
+              >
+                Testar Integração
+              </button>
+            </>
+          )}
+
+          {renderIOSOptions()}
+        </div>
+
+        <PWAInstallPrompt />
+        <BottomNavigation />
+      </div>
     </div>
   );
 }

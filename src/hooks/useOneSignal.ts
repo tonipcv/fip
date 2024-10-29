@@ -39,9 +39,24 @@ export const useOneSignal = () => {
           appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
           safari_web_id: process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID,
           notifyButton: {
-            enable: !isiOS,
+            enable: false,
           },
           allowLocalhostAsSecureOrigin: true,
+          promptOptions: {
+            slidedown: {
+              prompts: [
+                {
+                  type: "push",
+                  autoPrompt: false,
+                  text: {
+                    actionMessage: "Gostaria de receber notificações de novos sinais?",
+                    acceptButton: "Permitir",
+                    cancelButton: "Cancelar"
+                  }
+                }
+              ]
+            }
+          }
         });
 
         // Verifica status inicial
