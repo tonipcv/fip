@@ -15,7 +15,7 @@ export default function Home() {
   };
 
   return (
-    <div className="container mx-auto px-4 p-20 mb-4">
+    <div className="flex-auto justify-center container mx-auto px-4 p-20 mb-4 mt-16">
       <div className="flex justify-center mb-8">
         <Image
           src="/ft-icone.png"
@@ -28,28 +28,28 @@ export default function Home() {
       <form onSubmit={handleSubmit} className="max-w-md mx-auto">
         <div className="mb-4">
           <label htmlFor="name" className="block mb-2 text-sm font-bold text-white-700 font-helvetica">Nome</label>
-          <input type="text" id="name" name="name" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+          <input type="text" id="name" name="name" placeholder="Digite seu nome" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
         </div>
         <div className="mb-4">
           <label htmlFor="email" className="block mb-2 text-sm font-bold text-white-700">E-mail</label>
-          <input type="email" id="email" name="email" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+          <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
         </div>
         <div className="mb-4">
           <label htmlFor="phone" className="block mb-2 text-sm font-bold text-white-700">Telefone</label>
-          <input type="tel" id="phone" name="phone" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+          <input type="tel" id="phone" name="phone" placeholder="Digite seu telefone" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
         </div>
         <div className="mb-4">
           <label htmlFor="password" className="block mb-2 text-sm font-bold text-white-700">Senha</label>
-          <input type="password" id="password" name="password" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+          <input type="password" id="password" name="password" placeholder="Digite sua senha" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
         </div>
         <div className="mb-6">
           <label htmlFor="confirmPassword" className="block mb-2 text-sm font-bold text-white-700">Confirmar Senha</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirme sua senha" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
         </div>
         <div className="mb-6 text-center">
           <button 
             type="submit" 
-            className="w-full px-4 py-2 font-bold text-white bg-green-300 rounded-full hover:bg-green-700 focus:outline-none focus:shadow-outline"
+            className="w-full px-4 py-2 font-bold text-black bg-green-300 rounded-full hover:bg-green-700 focus:outline-none focus:shadow-outline"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Redirecionando...' : 'Registrar'}

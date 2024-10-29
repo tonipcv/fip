@@ -2,16 +2,24 @@
 
 import { useState, FormEvent } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
-    // Aqui você pode adicionar lógica para autenticação
-    // Por enquanto, vamos apenas redirecionar para k17.com.br
-    window.location.href = 'https://k17.com.br';
+    
+    try {
+      // Lógica de autenticação aqui
+      // Se bem-sucedido:
+      router.push('/success');
+    } catch (error) {
+      // Tratar erro de autenticação
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -37,7 +45,7 @@ export default function Login() {
         <div className="mb-6 text-center">
           <button 
             type="submit" 
-            className="w-full px-4 py-2 font-bold text-white bg-green-300 rounded-full hover:bg-green-500 focus:outline-none focus:shadow-outline"
+            className="w-full px-4 py-2 font-bold text-gray-700 bg-green-300 rounded-full hover:bg-green-400 focus:outline-none focus:shadow-outline"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Entrando...' : 'Entrar'}

@@ -32,12 +32,12 @@ export default function ForgotPassword() {
       <form onSubmit={handleSubmit} className="max-w-md mx-auto">
         <div className="mb-4">
           <label htmlFor="email" className="block mb-2 text-sm font-bold text-white-700">E-mail</label>
-          <input type="email" id="email" name="email" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+          <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
         </div>
         <div className="mb-6 text-center">
           <button 
             type="submit" 
-            className="w-full px-4 py-2 font-bold text-white bg-green-300 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+            className="w-full px-4 py-2 font-bold text-black bg-green-300 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Enviando...' : 'Enviar link de recuperação'}

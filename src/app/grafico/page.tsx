@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import BottomNavigation from '../../components/BottomNavigation';
 
 export default function Grafico() {
   useEffect(() => {
@@ -10,6 +11,7 @@ export default function Grafico() {
     script.src = 'https://s3.tradingview.com/tv.js';
     script.async = true;
     script.onload = () => {
+      // @ts-ignore
       new window.TradingView.widget({
         container_id: 'tradingview_chart',
         width: '100%',
@@ -47,18 +49,14 @@ export default function Grafico() {
 
       <div className="text-center mt-7">
         <button
-          className="w-full px-4 py-2 font-bold text-black bg-gray-300 rounded-full hover:bg-gray-400 focus:outline-none focus:shadow-outline mt-4"
+          className="w-full md:w-1/2 lg:w-1/3 px-4 py-2 font-bold text-black bg-gray-300 rounded-full hover:bg-gray-400 focus:outline-none focus:shadow-outline mt-4"
           onClick={() => window.location.href = 'https://apps.apple.com/app/bybit-buy-bitcoin-crypto/id1494961956'}
         >
           Enviar Ordem
         </button>
       </div>
 
-      <div className="text-center mt-4">
-        <Link href="/chat" className="text-white-500 hover:text-blue-700">
-          Acesso aos Sinais
-        </Link>
-      </div>
+      <BottomNavigation />
     </div>
   );
 }
