@@ -11,10 +11,17 @@ export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [installStatus, setInstallStatus] = useState('');
+  const [isPWA, setIsPWA] = useState(false);
 
   useEffect(() => {
-    // Verifica se o app já está instalado
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    // Verifica se está rodando como PWA
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                        (window.navigator as any).standalone ||
+                        document.referrer.includes('android-app://');
+    
+    setIsPWA(isStandalone);
+
+    if (isStandalone) {
       console.log('PWA já está instalado');
       setInstallStatus('installed');
       return;
@@ -35,6 +42,7 @@ export default function PWAInstallPrompt() {
     window.addEventListener('appinstalled', (e) => {
       console.log('PWA instalado com sucesso');
       setInstallStatus('just-installed');
+      setIsPWA(true);
     });
 
     return () => {
@@ -93,7 +101,7 @@ export default function PWAInstallPrompt() {
       <div className="fixed top-0 right-0 m-4 p-2 bg-black bg-opacity-75 text-white text-xs rounded">
         Status: {installStatus || 'não instalado'}<br />
         Prompt disponível: {deferredPrompt ? 'sim' : 'não'}<br />
-        {navigator.standalone ? 'Rodando como PWA' : 'Navegador normal'}
+        {isPWA ? 'Rodando como PWA' : 'Navegador normal'}
       </div>
     </>
   );

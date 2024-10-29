@@ -1,18 +1,33 @@
-import * as OneSignal from '@onesignal/node-onesignal';
+import OneSignal from '@onesignal/node-onesignal';
 
 const ONESIGNAL_APP_ID = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID || '';
 const ONESIGNAL_REST_API_KEY = process.env.NEXT_PUBLIC_ONESIGNAL_REST_API_KEY || '';
 
-// Configuração do cliente OneSignal usando os nomes corretos das propriedades
+// Configuração do cliente OneSignal
 const configuration = {
-    basePath: "https://onesignal.com/api/v1",
-    authBasic: {
-        api_key: ONESIGNAL_REST_API_KEY,
-    },
+    appKey: ONESIGNAL_REST_API_KEY,
+    appId: ONESIGNAL_APP_ID
 };
 
-// Criando o cliente usando a API correta do OneSignal
-export const oneSignalClient = new OneSignal.DefaultApi(configuration);
+// Criando o cliente usando a configuração correta
+export const oneSignalClient = {
+    async createNotification(notification: OneSignalNotification) {
+        const response = await fetch('https://onesignal.com/api/v1/notifications', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Basic ${ONESIGNAL_REST_API_KEY}`
+            },
+            body: JSON.stringify(notification)
+        });
+
+        if (!response.ok) {
+            throw new Error('Falha ao enviar notificação');
+        }
+
+        return response.json();
+    }
+};
 
 // Interface para a notificação
 export interface OneSignalNotification {
