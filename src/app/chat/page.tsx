@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 
 export default function Chat() {
-  const { getUserId, isIOS } = useOneSignal();
+  const { getUserId, isIOS, subscriptionStatus } = useOneSignal();
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -102,8 +102,36 @@ export default function Chat() {
     );
   };
 
+  // Adicione este componente para mostrar o status
+  const SubscriptionStatus = () => (
+    <div className="fixed top-0 left-0 right-0 bg-black bg-opacity-75 text-white p-2 text-sm">
+      <div className="max-w-md mx-auto">
+        <p className="flex items-center justify-between">
+          <span>Status da Inscrição:</span>
+          <span className={`px-2 py-1 rounded ${
+            subscriptionStatus.isSubscribed ? 'bg-green-500' : 'bg-red-500'
+          }`}>
+            {subscriptionStatus.isSubscribed ? 'Inscrito' : 'Não Inscrito'}
+          </span>
+        </p>
+        {subscriptionStatus.userId && (
+          <p className="text-xs mt-1">ID: {subscriptionStatus.userId}</p>
+        )}
+        <p className="flex items-center justify-between mt-1">
+          <span>Notificações:</span>
+          <span className={`px-2 py-1 rounded ${
+            subscriptionStatus.pushEnabled ? 'bg-green-500' : 'bg-yellow-500'
+          }`}>
+            {subscriptionStatus.pushEnabled ? 'Habilitadas' : 'Desabilitadas'}
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="container mx-auto px-4 p-20 mb-4">
+      <SubscriptionStatus />
       <div className="flex justify-center mb-8">
         <Image
           src="/ft-icone.png"

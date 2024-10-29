@@ -15,9 +15,17 @@ interface DeviceState {
 
 export const useOneSignal = () => {
   const [isIOS, setIsIOS] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<{
+    isSubscribed: boolean;
+    userId: string | null;
+    pushEnabled: boolean;
+  }>({
+    isSubscribed: false,
+    userId: null,
+    pushEnabled: false
+  });
 
   useEffect(() => {
-    // Detecta se é iOS
     const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     setIsIOS(isiOS);
 
@@ -26,60 +34,50 @@ export const useOneSignal = () => {
 
       window.OneSignal.push(() => {
         console.log('Iniciando OneSignal...');
-        console.log('Dispositivo iOS:', isiOS);
         
         window.OneSignal.init({
           appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
           safari_web_id: process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID,
           notifyButton: {
-            enable: !isiOS, // Desabilita o botão de notificação no iOS
+            enable: !isiOS,
           },
           allowLocalhostAsSecureOrigin: true,
-          serviceWorkerParam: { scope: '/push/onesignal/' },
-          serviceWorkerPath: '/push/onesignal/OneSignalSDKWorker.js',
         });
 
-        // Registra handlers para debug
-        window.OneSignal.on('subscriptionChange', function (isSubscribed: boolean) {
-          console.log('Mudança na inscrição:', isSubscribed);
-        });
-
-        window.OneSignal.on('notificationPermissionChange', function (permissionChange: any) {
-          console.log('Mudança na permissão:', permissionChange);
-        });
-
-        // Verifica estado atual
-        window.OneSignal.isPushNotificationsEnabled((isEnabled: boolean) => {
-          console.log('Notificações push estão habilitadas:', isEnabled);
-        });
-
+        // Verifica status inicial
         window.OneSignal.getDeviceState((deviceState: DeviceState) => {
-          console.log('Estado do dispositivo:', {
-            userId: deviceState?.userId,
-            pushToken: deviceState?.pushToken,
-            isSubscribed: deviceState?.isSubscribed,
-            isPushDisabled: deviceState?.isPushDisabled
+          setSubscriptionStatus({
+            isSubscribed: deviceState?.isSubscribed || false,
+            userId: deviceState?.userId || null,
+            pushEnabled: !deviceState?.isPushDisabled
+          });
+          console.log('Estado inicial:', deviceState);
+        });
+
+        // Monitora mudanças na inscrição
+        window.OneSignal.on('subscriptionChange', function(isSubscribed: boolean) {
+          console.log('Status da inscrição mudou:', isSubscribed);
+          window.OneSignal.getDeviceState((deviceState: DeviceState) => {
+            setSubscriptionStatus({
+              isSubscribed: isSubscribed,
+              userId: deviceState?.userId || null,
+              pushEnabled: !deviceState?.isPushDisabled
+            });
           });
         });
-
-        // Força exibição do prompt de permissão
-        window.OneSignal.showSlidedownPrompt();
       });
     }
   }, []);
 
   const getUserId = async () => {
     try {
-      console.log('Obtendo userId...');
       const deviceState = await new Promise<DeviceState>((resolve) => {
         window.OneSignal.push(() => {
           window.OneSignal.getDeviceState((state: DeviceState) => {
-            console.log('Device State:', state);
             resolve(state);
           });
         });
       });
-      console.log('UserId obtido:', deviceState?.userId);
       return deviceState?.userId;
     } catch (error) {
       console.error('Erro ao obter userId:', error);
@@ -87,5 +85,5 @@ export const useOneSignal = () => {
     }
   };
 
-  return { getUserId, isIOS };
+  return { getUserId, isIOS, subscriptionStatus };
 };
