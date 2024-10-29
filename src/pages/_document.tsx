@@ -17,27 +17,8 @@ export default function Document() {
           src="https://cdn.onesignal.com/sdks/OneSignalSDK.js"
           async
         ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.OneSignal = window.OneSignal || [];
-              OneSignal.push(function() {
-                OneSignal.init({
-                  appId: "${process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID}",
-                  safari_web_id: "${process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID}",
-                  notifyButton: {
-                    enable: true,
-                  },
-                  allowLocalhostAsSecureOrigin: true,
-                  serviceWorkerPath: '/OneSignalSDKWorker.js',
-                  serviceWorkerParam: { scope: '/' }
-                });
-              });
-            `,
-          }}
-        />
       </Head>
-      <body>
+      <body className="bg-black">
         <Main />
         <NextScript />
       </body>

@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 
 export default function Chat() {
-  const { getUserId, isIOS, subscriptionStatus } = useOneSignal();
+  const { getUserId, isIOS, subscriptionStatus, showNotificationPrompt } = useOneSignal();
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -138,6 +138,50 @@ export default function Chat() {
     }
   };
 
+  const renderIOSInstructions = () => {
+    if (!isIOS) return null;
+
+    return (
+      <div className="text-center mb-6 p-4 bg-yellow-500 bg-opacity-20 rounded-lg">
+        <h3 className="text-lg font-bold text-yellow-500 mb-2">📱 Usuários iOS</h3>
+        <p className="text-white mb-4">
+          Para receber notificações no iOS, siga estes passos:
+        </p>
+        <ol className="text-left text-white space-y-2 ml-4">
+          <li>1. Toque no botão compartilhar <span className="inline-block">⬆️</span></li>
+          <li>2. Selecione "Adicionar à Tela de Início" 📱</li>
+          <li>3. Abra o app pela tela inicial 🏠</li>
+          <li>4. Aceite as notificações quando solicitado 🔔</li>
+        </ol>
+        <button
+          onClick={() => {
+            alert('Procure o botão de compartilhar (⬆️) no seu navegador e selecione "Adicionar à Tela de Início"');
+          }}
+          className="mt-4 px-6 py-2 bg-yellow-500 text-black rounded-full font-bold"
+        >
+          Como Instalar?
+        </button>
+      </div>
+    );
+  };
+
+  // Adicione esta função no início do componente Chat
+  const isPWA = () => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(display-mode: standalone)').matches ||
+             (window.navigator as any).standalone ||
+             document.referrer.includes('android-app://');
+    }
+    return false;
+  };
+
+  // Adicione este useEffect para debug
+  useEffect(() => {
+    console.log('Rodando como PWA:', isPWA());
+    console.log('Display Mode:', window.matchMedia('(display-mode: standalone)').matches);
+    console.log('iOS Standalone:', (window.navigator as any).standalone);
+  }, []);
+
   return (
     <div className="min-h-screen bg-black">
       <div className="container mx-auto px-4 p-20 mb-4">
@@ -151,15 +195,17 @@ export default function Chat() {
           />
         </div>
 
-        {!subscriptionStatus.isSubscribed && (
-          <div className="text-center mb-6">
-            <button
-              onClick={solicitarPermissao}
-              className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
-            >
-              🔔 Ativar Notificações
-            </button>
-          </div>
+        {isIOS ? renderIOSInstructions() : (
+          !subscriptionStatus.isSubscribed && (
+            <div className="text-center mb-6">
+              <button
+                onClick={showNotificationPrompt}
+                className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
+              >
+                🔔 Ativar Notificações
+              </button>
+            </div>
+          )
         )}
 
         <div className="text-center font-helvetica mb-10 mt-30 text-2xl text-white">

@@ -29,17 +29,15 @@ export const useOneSignal = () => {
     const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     setIsIOS(isiOS);
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !isiOS) {
       window.OneSignal = window.OneSignal || [];
 
-      window.OneSignal.push(() => {
-        console.log('Iniciando OneSignal...');
-        
-        window.OneSignal.init({
+      const initOneSignal = async () => {
+        await window.OneSignal.init({
           appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
           safari_web_id: process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID,
           notifyButton: {
-            enable: false,
+            enable: false, // Desabilitamos o botão padrão
           },
           allowLocalhostAsSecureOrigin: true,
           promptOptions: {
@@ -49,9 +47,9 @@ export const useOneSignal = () => {
                   type: "push",
                   autoPrompt: false,
                   text: {
-                    actionMessage: "Gostaria de receber notificações de novos sinais?",
-                    acceptButton: "Permitir",
-                    cancelButton: "Cancelar"
+                    actionMessage: "Deseja receber notificações de novos sinais?",
+                    acceptButton: "Sim",
+                    cancelButton: "Agora não"
                   }
                 }
               ]
@@ -60,45 +58,58 @@ export const useOneSignal = () => {
         });
 
         // Verifica status inicial
-        window.OneSignal.getDeviceState((deviceState: DeviceState) => {
-          setSubscriptionStatus({
-            isSubscribed: deviceState?.isSubscribed || false,
-            userId: deviceState?.userId || null,
-            pushEnabled: !deviceState?.isPushDisabled
-          });
-          console.log('Estado inicial:', deviceState);
+        const deviceState = await window.OneSignal.getDeviceState();
+        console.log('Estado inicial do dispositivo:', deviceState);
+        
+        setSubscriptionStatus({
+          isSubscribed: deviceState?.isSubscribed || false,
+          userId: deviceState?.userId || null,
+          pushEnabled: !deviceState?.isPushDisabled
         });
 
+        // Se não estiver inscrito, mostra o prompt
+        if (!deviceState?.isSubscribed) {
+          console.log('Usuário não inscrito, mostrando prompt...');
+          setTimeout(() => {
+            window.OneSignal.showSlidedownPrompt();
+          }, 2000); // Aguarda 2 segundos antes de mostrar
+        }
+
         // Monitora mudanças na inscrição
-        window.OneSignal.on('subscriptionChange', function(isSubscribed: boolean) {
+        window.OneSignal.on('subscriptionChange', async (isSubscribed: boolean) => {
           console.log('Status da inscrição mudou:', isSubscribed);
-          window.OneSignal.getDeviceState((deviceState: DeviceState) => {
-            setSubscriptionStatus({
-              isSubscribed: isSubscribed,
-              userId: deviceState?.userId || null,
-              pushEnabled: !deviceState?.isPushDisabled
-            });
+          const newState = await window.OneSignal.getDeviceState();
+          setSubscriptionStatus({
+            isSubscribed: isSubscribed,
+            userId: newState?.userId || null,
+            pushEnabled: !newState?.isPushDisabled
           });
         });
-      });
+      };
+
+      initOneSignal();
     }
   }, []);
 
-  const getUserId = async () => {
-    try {
-      const deviceState = await new Promise<DeviceState>((resolve) => {
-        window.OneSignal.push(() => {
-          window.OneSignal.getDeviceState((state: DeviceState) => {
-            resolve(state);
-          });
-        });
-      });
-      return deviceState?.userId;
-    } catch (error) {
-      console.error('Erro ao obter userId:', error);
-      return null;
+  const showNotificationPrompt = () => {
+    if (isIOS) {
+      alert('Para receber notificações no iOS:\n\n1. Adicione este site à sua tela inicial\n2. Abra o app pela tela inicial\n3. Permita as notificações quando solicitado');
+      return;
+    }
+
+    if (window.OneSignal) {
+      window.OneSignal.showSlidedownPrompt();
     }
   };
 
-  return { getUserId, isIOS, subscriptionStatus };
+  return { 
+    getUserId: async () => {
+      if (isIOS) return null;
+      const state = await window.OneSignal?.getDeviceState();
+      return state?.userId;
+    }, 
+    isIOS, 
+    subscriptionStatus,
+    showNotificationPrompt
+  };
 };
