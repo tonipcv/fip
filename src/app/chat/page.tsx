@@ -76,26 +76,58 @@ export default function Chat() {
   const renderIOSOptions = () => {
     if (!isIOS) return null;
 
+    const handleAddToHomeScreen = async () => {
+      // Verifica se está rodando como PWA
+      const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches || 
+                            (window.navigator as any).standalone;
+
+      if (isPWAInstalled) {
+        // Se já está rodando como PWA, tenta registrar no OneSignal
+        try {
+          await window.OneSignal.init({
+            appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
+            safari_web_id: process.env.NEXT_PUBLIC_ONESIGNAL_SAFARI_WEB_ID,
+            notifyButton: {
+              enable: true,
+            },
+            allowLocalhostAsSecureOrigin: true,
+          });
+
+          // Solicita permissão para notificações
+          const permission = await window.Notification.requestPermission();
+          if (permission === 'granted') {
+            window.OneSignal.showSlidedownPrompt();
+            alert('Notificações ativadas com sucesso!');
+          } else {
+            alert('Por favor, permita as notificações nas configurações do seu dispositivo.');
+          }
+        } catch (error) {
+          console.error('Erro ao registrar OneSignal:', error);
+          alert('Ocorreu um erro ao ativar as notificações. Por favor, tente novamente.');
+        }
+      } else {
+        // Se não está rodando como PWA, mostra instruções de instalação
+        alert(`Para receber notificações no iOS:
+1. Toque no botão compartilhar (ícone ⬆️)
+2. Role para baixo e toque em "Adicionar à Tela de Início"
+3. Depois de instalado, abra o app pela tela inicial
+4. Toque em "Ativar Notificações" novamente`);
+      }
+    };
+
     return (
       <div className="text-center mt-4">
         <p className="text-sm text-gray-500 mb-2">
-          Para receber notificações no iOS, você pode:
+          Para receber notificações no iOS, você precisa:
         </p>
         <div className="space-y-2">
-          <a
-            href="#" // Link para sua app store
-            className="block w-full md:w-1/2 lg:w-1/3 mx-auto px-4 py-2 font-bold text-white bg-black rounded-full hover:bg-gray-800 focus:outline-none focus:shadow-outline"
-          >
-            Baixar o App
-          </a>
           <button
-            onClick={() => {
-              // Adicionar à tela inicial como PWA
-              alert('Adicione este site à sua tela inicial para receber notificações');
-            }}
+            onClick={handleAddToHomeScreen}
             className="block w-full md:w-1/2 lg:w-1/3 mx-auto px-4 py-2 font-bold text-black bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none focus:shadow-outline"
           >
-            Adicionar à Tela Inicial
+            {window.matchMedia('(display-mode: standalone)').matches ? 
+              '🔔 Ativar Notificações' : 
+              '📱 Adicionar à Tela Inicial'}
           </button>
         </div>
       </div>
